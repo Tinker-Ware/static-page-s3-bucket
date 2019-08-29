@@ -1,0 +1,28 @@
+---
+- name: Clone repo for static files and upload it to AWS S3.
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Clone static files repo
+      git:
+        repo: "git@gitlab.com:tinkerware-devops/static-homepage-files.git"
+        dest: static-files
+        force: yes
+        accept_hostkey: yes
+        key_file: "$HOME/.ssh/id_rsa.pub"
+    
+    - name: Remove unnecesary .git folder
+      file:
+        state: absent
+        path: static-files/.git/
+
+    - name: Upload static files to S3 bucket
+      s3_sync:
+        profile: default
+        region: "us-east-1"
+        aws_access_key: ""
+        aws_secret_key: ""
+        bucket: "tinkerware-staging.com"
+        file_root: "./static-files/"
+        include: "*,.*"
+        exclude: ".gitignore"

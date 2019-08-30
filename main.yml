@@ -3,6 +3,9 @@
   hosts: localhost
   connection: local
   tasks:
+    - name: Include vars
+      include_vars: encrypted_vars.yml
+
     - name: Clone static files repo
       git:
         repo: "git@gitlab.com:tinkerware-devops/static-homepage-files.git"
@@ -18,11 +21,15 @@
 
     - name: Upload static files to S3 bucket
       s3_sync:
-        profile: default
         region: "us-east-1"
-        aws_access_key: ""
-        aws_secret_key: ""
-        bucket: "tinkerware-staging.com"
-        file_root: "./static-files/"
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        bucket: "{{ bucket_name }}"
+        file_root: "static-files/"
         include: "*,.*"
         exclude: ".gitignore"
+  
+    - name: Remove cloned repo folder
+      file:
+        state: absent
+        path: static-files/

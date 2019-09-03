@@ -8,16 +8,32 @@
 
     - name: Clone static files repo
       git:
-        repo: "git@gitlab.com:tinkerware-devops/static-homepage-files.git"
-        dest: static-files
+        repo: "git@github.com:Tinker-Ware/homepage.git"
+        version: development
+        dest: homepage
         force: yes
         accept_hostkey: yes
         key_file: "$HOME/.ssh/id_rsa.pub"
     
-    - name: Remove unnecesary .git folder
-      file:
-        state: absent
-        path: static-files/.git/
+    - name: Install node dependencies
+      command: "npm install" 
+      args:
+        chdir: homepage
+
+    - name: Build static page
+      command: "gulp dist"
+      args:
+        chdir: homepage
+
+    - name: Move dist folder
+      command: "mv dist ../static-files"
+      args:
+        chdir: homepage
+
+    - name: Add placeholder error.html for S3 bucket
+      shell: "echo 'Error loading page' > error.html"
+      args:
+        chdir: static-files
 
     - name: Upload static files to S3 bucket
       s3_sync:
@@ -26,10 +42,14 @@
         aws_secret_key: "{{ aws_secret_key }}"
         bucket: "{{ bucket_name }}"
         file_root: "static-files/"
-        include: "*,.*"
-        exclude: ".gitignore"
+        include: "*"
   
     - name: Remove cloned repo folder
+      file:
+        state: absent
+        path: homepage/
+
+    - name: Remove static-files folder
       file:
         state: absent
         path: static-files/

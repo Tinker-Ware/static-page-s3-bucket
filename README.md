@@ -13,6 +13,7 @@ This repo allows you to host your static webpage in a S3 Bucket from AWS, linkin
 - The next two environment variables, set with the corresponding values for your account:
     - AWS_ACCESS_KEY
     - AWS_SECRET_KEY
+- Add your SSH key to Github. On your computer it should be located at `HOME/.ssh/id_rsa.pub`
 
 ## How to use
 1) Add the needed variables in `ansible-s3-static-page-upload-role/vars/main.yml` if you need different values from the default ones.

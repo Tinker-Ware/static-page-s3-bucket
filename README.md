@@ -30,7 +30,7 @@ This repo allows you to host your static webpage in a S3 Bucket from AWS, linkin
 
 ## How to use
 1) Add the needed variables in `ansible-s3-static-page-upload-role/vars/main.yml` if you need different values from the default ones.
-    1.1) If you changed the `bucket_name` variable value, set the same value for that variable in `terraform.tfvars`
+    1.1) If you changed the `bucket_name` variable value, set the same value for that variable in `terraform.tfvars` and also edit the line 9 of `bucket-policy.json` to reference the same bucket.
 2) If you don't wan't to create an extra S3 bucket for the `www` subdomain, change `create_www_bucket` to `false` inside `terraform.tfvars`
 3) Run `terraform init` for Terraform to download all the needed files to interact with AWS
 4) Run `terraform apply` and wait for it to finish

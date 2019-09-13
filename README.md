@@ -12,7 +12,20 @@ This repo allows you to host your static webpage in a S3 Bucket from AWS, linkin
     - Null provider 2.1.2 or higher
 - The next two environment variables, set with the corresponding values for your account:
     - AWS_ACCESS_KEY
-    - AWS_SECRET_KEY
+    - AWS_SECRET_KEY   
+       
+    You could try any of these options:
+    - `VARNAME="VALUE"` --> Works **only** for current shell
+    - `export VARNAME="VALUE"` --> Works for current shell and **all processes** started from current shell
+    - To set it **permanently** for all future bash sessions add such line to your `.bashrc` file in your `HOME` directory.
+    - To set it permanently, and **system wide** (all users, all processes) add set variable in /etc/environment:   
+        `sudo nano /etc/environment`   
+        This file only accepts variable assignments like:   
+        `VARNAME="VALUE"`
+
+    Credits to `Michał Šrajer` from the accepted answer in 
+    `https://askubuntu.com/questions/58814/how-do-i-add-environment-variables`
+
 - Add your SSH key to Github. On your computer it should be located at `HOME/.ssh/id_rsa.pub`
 
 ## How to use

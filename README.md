@@ -6,11 +6,16 @@ This repo allows you to host your static webpage in a S3 Bucket from AWS, linkin
 > error.html
 
 ## Requirements:
-- Ansible 2.8.1 or higher
+- Install and/or update `pip` to the latest version:   
+    `sudo apt install python3-pip; pip install --upgrade pip`
+- Python packages required included in requirements file:   
+    `pip install -r requirements.txt`
 - Terraform 0.12.6 or higher
+    1) Download the required binary for your system from [here](https://www.terraform.io/downloads.html).
+    2) Extract the downloaded binary and (for practicallity) move it to any folder included in your `PATH`.
     - AWS provider 2.25.0 or higher (automatically installed with step 3 of *How to use* section)
     - Null provider 2.1.2 or higher (automatically installed with step 3 of *How to use* section)
-- The next two environment variables, set with the corresponding values for your account:
+- The next two environment variables, set with the corresponding values for your AWS account:
     - AWS_ACCESS_KEY
     - AWS_SECRET_KEY   
        
@@ -23,8 +28,7 @@ This repo allows you to host your static webpage in a S3 Bucket from AWS, linkin
         This file only accepts variable assignments like:   
         `VARNAME="VALUE"`
 
-    Credits to `Michał Šrajer` from the accepted answer in 
-    `https://askubuntu.com/questions/58814/how-do-i-add-environment-variables`
+    Credits to `Michał Šrajer` from the accepted answer in [this](https://askubuntu.com/questions/58814/how-do-i-add-environment-variables) StackOverflow question. 
 
 - Add your SSH key to Github. On your computer it should be located at `HOME/.ssh/id_rsa.pub`
 

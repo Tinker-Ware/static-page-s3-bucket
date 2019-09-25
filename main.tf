@@ -9,28 +9,30 @@ provider "aws" {
 }
 
 resource "aws_s3_bucket" "main_domain" {
-    bucket  = "tinkerware-staging.com"
-    acl     = "public-read"
-    policy  = "${file("bucket-policy.json")}"
-    force_destroy = true
+  bucket  = "${ var.bucket_name }"
+  acl     = "public-read"
+  policy  = "${file("bucket-policy.json")}"
+  force_destroy = true
 
-    website {
-        index_document = "index.html"
-        error_document = "error.html"
-    }
+  website {
+    index_document = "index.html"
+    error_document = "error.html"
+  }
 }
 
 resource "aws_s3_bucket" "subdomain_redirect" {
-    bucket  = "s3.tinkerware-staging.com"
-    acl     = "public-read"
+  count = "${ var.create_www_bucket ? 1 : 0 }"
 
-    website {
-        redirect_all_requests_to = "tinkerware-staging.com"
-    }
+  bucket  = "www.${ var.bucket_name }"
+  acl     = "public-read"
+
+  website {
+    redirect_all_requests_to = "${ var.bucket_name }"
+  }
 }
 
 data "aws_route53_zone" "hosted_zone" {
-  name = "tinkerware-staging.com"
+  name = "${ var.bucket_name }"
 }
 
 resource "aws_route53_record" "main_record" {
@@ -46,13 +48,15 @@ resource "aws_route53_record" "main_record" {
 }
 
 resource "aws_route53_record" "subdomain_record" {
+  count = "${ var.create_www_bucket ? 1 : 0 }"
+
   zone_id           = "${data.aws_route53_zone.hosted_zone.zone_id}"
-  name              = "${aws_s3_bucket.subdomain_redirect.bucket}"
+  name              = "${aws_s3_bucket.subdomain_redirect[0].bucket}"
   type              = "A"
 
   alias {
-    name                    = "${aws_s3_bucket.subdomain_redirect.website_domain}"
-    zone_id                 = "${aws_s3_bucket.subdomain_redirect.hosted_zone_id}"
+    name                    = "${aws_s3_bucket.subdomain_redirect[0].website_domain}"
+    zone_id                 = "${aws_s3_bucket.subdomain_redirect[0].hosted_zone_id}"
     evaluate_target_health  = "true"
   }
 }
@@ -60,7 +64,7 @@ resource "aws_route53_record" "subdomain_record" {
 resource "null_resource" "provision1" {
     depends_on = [aws_s3_bucket.main_domain]
     provisioner "local-exec" {
-      command = "ansible-playbook main.yml --ask-vault-pass"
+      command = "ansible-playbook main.yml"
       
     }
 }

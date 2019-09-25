@@ -1,0 +1,5 @@
+- ansible
+- boto
+- boto3
+- botocore
+- python-dateutil

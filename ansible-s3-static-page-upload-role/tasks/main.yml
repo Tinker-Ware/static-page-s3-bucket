@@ -1,0 +1,22 @@
+- name: Clone repo
+  git:
+    repo: "{{ repo }}"
+    version: "{{ branch }}"
+    dest: cloned_repo
+    force: yes
+    accept_hostkey: yes
+    key_file: "$HOME/.ssh/id_rsa.pub"
+
+- name: Upload static files to S3 bucket
+  s3_sync:
+    region: "us-east-1"
+    aws_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY') }}"
+    aws_secret_key: "{{ lookup('env', 'AWS_SECRET_KEY') }}"
+    bucket: "{{ bucket_name }}"
+    file_root: cloned_repo
+    include: "*"
+
+- name: Remove cloned repo folder
+  file:
+    state: absent
+    path: cloned_repo/
